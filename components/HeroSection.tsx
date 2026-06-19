@@ -20,6 +20,10 @@ const moreLinks = [
   { label: "Textile", href: "https://mekark-textile.vercel.app/" },
   { label: "Industrial Tanks", href: "https://mekark-tanks.vercel.app/" },
   { label: "Logistics & Warehousing", href: "https://logics-ten.vercel.app/" },
+  { label: "Electronics", href: "https://mekark-electronics.vercel.app/" },
+  { label: "Windmill & Renewable Energy", href: "https://mekark-windmill.vercel.app/" },
+  { label: "MEP & Utility Systems", href: "https://mep-mekark.vercel.app/" },
+  { label: "Blog", href: "https://blog.mekark.com/" },
 ];
 
 const stats = [
