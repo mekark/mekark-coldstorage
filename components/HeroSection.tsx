@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, Check, Phone, MessageCircle } from "lucide-react";
+import { Menu, X, Check, Phone, MessageCircle, ChevronDown } from "lucide-react";
 import ConsultationForm from "@/components/ConsultationForm";
 
 const navItems = [
@@ -12,6 +12,14 @@ const navItems = [
   { label: "Industries", href: "#sector-coverage" },
   { label: "Why Choose", href: "#why-mekark" },
   { label: "Testimonials", href: "#testimonials" },
+];
+
+const moreLinks = [
+  { label: "Data Centers", href: "https://mekark-datacenter.vercel.app/" },
+  { label: "Automotive", href: "https://mekark-automotive.vercel.app/" },
+  { label: "Textile", href: "https://mekark-textile.vercel.app/" },
+  { label: "Industrial Tanks", href: "https://mekark-tanks.vercel.app/" },
+  { label: "Logistics & Warehousing", href: "https://logics-ten.vercel.app/" },
 ];
 
 const stats = [
@@ -33,6 +41,8 @@ const certifications = ["ISO 9001", "FSSAI", "APEDA", "EPC"];
 
 export default function ColdStorageHero() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [moreOpen, setMoreOpen] = useState(false);
+  const [mobileMoreOpen, setMobileMoreOpen] = useState(false);
 
   return (
     <section id="hero-section" className="relative min-h-screen overflow-hidden bg-[#081018]">
@@ -64,7 +74,7 @@ export default function ColdStorageHero() {
 
       <div className="relative z-20 max-w-[1440px] mx-auto px-4 md:px-8 lg:px-[80px]">
         {/* Navbar */}
-        <header className="h-[86px] flex items-center justify-between">
+        <header className="relative z-50 h-[86px] flex items-center justify-between">
           <div className="relative w-[130px] h-[60px] shrink-0">
             <Image
               src="/Images/LogoMekark.png"
@@ -84,6 +94,51 @@ export default function ColdStorageHero() {
                 {item.label}
               </a>
             ))}
+
+            <div
+              className="relative"
+              onMouseEnter={() => setMoreOpen(true)}
+              onMouseLeave={() => setMoreOpen(false)}
+            >
+              <button
+                type="button"
+                className="flex items-center gap-1 text-white text-[15px] font-medium transition-all duration-300 hover:text-white/70"
+                aria-expanded={moreOpen}
+                aria-haspopup="true"
+              >
+                More
+                <ChevronDown
+                  size={16}
+                  className={`transition-transform duration-200 ${moreOpen ? "rotate-180" : ""}`}
+                />
+              </button>
+
+              <AnimatePresence>
+                {moreOpen && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 8 }}
+                    transition={{ duration: 0.15 }}
+                    className="absolute top-full left-1/2 -translate-x-1/2 pt-3 min-w-[220px] z-50"
+                  >
+                    <div className="rounded-xl border border-white/10 bg-[#0a1219]/95 backdrop-blur-xl py-2 shadow-xl">
+                      {moreLinks.map((link) => (
+                        <a
+                          key={link.label}
+                          href={link.href}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="block px-4 py-2.5 text-white text-[14px] font-medium transition-colors hover:bg-white/10 hover:text-white/90"
+                        >
+                          {link.label}
+                        </a>
+                      ))}
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
           </nav>
 
           <a
@@ -108,7 +163,7 @@ export default function ColdStorageHero() {
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
-              className="lg:hidden bg-black/70 backdrop-blur-xl rounded-2xl p-6 mb-8"
+              className="lg:hidden relative z-50 bg-black/70 backdrop-blur-xl rounded-2xl p-6 mb-8"
             >
               <div className="flex flex-col gap-5">
                 {navItems.map((item) => (
@@ -121,6 +176,42 @@ export default function ColdStorageHero() {
                     {item.label}
                   </a>
                 ))}
+
+                <div>
+                  <button
+                    type="button"
+                    className="flex items-center gap-1 text-white w-full"
+                    onClick={() => setMobileMoreOpen(!mobileMoreOpen)}
+                    aria-expanded={mobileMoreOpen}
+                  >
+                    More
+                    <ChevronDown
+                      size={16}
+                      className={`transition-transform duration-200 ${mobileMoreOpen ? "rotate-180" : ""}`}
+                    />
+                  </button>
+
+                  {mobileMoreOpen && (
+                    <div className="mt-3 ml-3 flex flex-col gap-3 border-l border-white/20 pl-4">
+                      {moreLinks.map((link) => (
+                        <a
+                          key={link.label}
+                          href={link.href}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-white/80 text-sm"
+                          onClick={() => {
+                            setMobileMenuOpen(false);
+                            setMobileMoreOpen(false);
+                          }}
+                        >
+                          {link.label}
+                        </a>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
                 <a
                   href="#footer-form"
                   className="bg-white text-black rounded-lg py-3 font-semibold text-center"
@@ -134,7 +225,7 @@ export default function ColdStorageHero() {
         </AnimatePresence>
 
         {/* Hero Content */}
-        <div className="min-h-[calc(100vh-86px)] flex items-center py-12 lg:py-8">
+        <div className="relative z-10 min-h-[calc(100vh-86px)] flex items-center py-12 lg:py-8">
           <div className="grid lg:grid-cols-[1fr_520px] gap-10 xl:gap-14 items-start w-full">
             {/* Left Content */}
             <div className="flex flex-col gap-8">
