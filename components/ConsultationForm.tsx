@@ -82,17 +82,7 @@ type ConsultationFormProps = {
 };
 
 function buildMessage(formData: FormData) {
-  const parts: string[] = [];
-
-  if (formData.storageType) {
-    parts.push(`Storage Type: ${formData.storageType}`);
-  }
-
-  if (formData.projectRequirement.trim()) {
-    parts.push(formData.projectRequirement.trim());
-  }
-
-  return parts.join("\n\n");
+  return formData.projectRequirement.trim();
 }
 
 export default function ConsultationForm({
@@ -196,6 +186,7 @@ export default function ConsultationForm({
           company: formData.companyName.trim(),
           location: formData.projectLocation.trim(),
           industry: formData.industryType,
+          storageType: formData.storageType,
           sqf: formData.sqFt,
           message: buildMessage(formData),
           sourceName,
