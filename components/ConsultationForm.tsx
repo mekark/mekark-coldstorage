@@ -3,6 +3,20 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 
+const START_TIMELINES = [
+  "Immediately",
+  "Within 1 Month",
+  "Within 3 Months",
+  "Planning for Future",
+];
+
+const BUDGETS = [
+  "Below ₹50 Lakhs",
+  "₹50 Lakhs – ₹1 Crore",
+  "₹1 Crore – ₹5 Crores",
+  "Above ₹5 Crores",
+];
+
 const industryOptions = [
   "Pharmaceutical",
   "Seafood & Marine Exports",
@@ -39,6 +53,8 @@ type FormData = {
   industryType: string;
   storageType: string;
   sqFt: string;
+  startTimeline: string;
+  budget: string;
   projectRequirement: string;
 };
 
@@ -54,6 +70,8 @@ const initialFormData: FormData = {
   industryType: "",
   storageType: "",
   sqFt: "",
+  startTimeline: "",
+  budget: "",
   projectRequirement: "",
 };
 
@@ -71,6 +89,8 @@ const defaultRequiredFields: RequiredField[] = [
   "industryType",
   "storageType",
   "sqFt",
+  "startTimeline",
+  "budget",
 ];
 
 type ConsultationFormProps = {
@@ -156,6 +176,14 @@ export default function ConsultationForm({
       newErrors.sqFt = "Sq. ft. selection is required";
     }
 
+    if (isRequired("startTimeline") && !formData.startTimeline) {
+      newErrors.startTimeline = "Please select a project start timeline";
+    }
+
+    if (isRequired("budget") && !formData.budget) {
+      newErrors.budget = "Please select a project budget";
+    }
+
     if (isRequired("projectRequirement") && !formData.projectRequirement.trim()) {
       newErrors.projectRequirement = "Project requirement is required";
     }
@@ -188,6 +216,8 @@ export default function ConsultationForm({
           industry: formData.industryType,
           storageType: formData.storageType,
           sqf: formData.sqFt,
+          startTimeline: formData.startTimeline,
+          budget: formData.budget,
           message: buildMessage(formData),
           sourceName,
           sourceDomain:
@@ -317,30 +347,58 @@ export default function ConsultationForm({
           </div>
         </div>
 
-        <div>
-          <label htmlFor={fieldId("projectLocation")} className={labelClass}>
-            Project Location{" "}
-            {isRequired("projectLocation") && <span className="text-[#ED2024]">*</span>}
-          </label>
-          <input
-            id={fieldId("projectLocation")}
-            type="text"
-            value={formData.projectLocation}
-            onChange={(e) => {
-              setFormData({
-                ...formData,
-                projectLocation: e.target.value,
-              });
-              clearError("projectLocation");
-            }}
-            placeholder="City, State"
-            className={inputClass}
-          />
-          {errors.projectLocation && (
-            <p className="text-red-500 text-xs mt-1">
-              {errors.projectLocation}
-            </p>
-          )}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+          <div>
+            <label htmlFor={fieldId("projectLocation")} className={labelClass}>
+              Project Location{" "}
+              {isRequired("projectLocation") && <span className="text-[#ED2024]">*</span>}
+            </label>
+            <input
+              id={fieldId("projectLocation")}
+              type="text"
+              value={formData.projectLocation}
+              onChange={(e) => {
+                setFormData({
+                  ...formData,
+                  projectLocation: e.target.value,
+                });
+                clearError("projectLocation");
+              }}
+              placeholder="City, State"
+              className={inputClass}
+            />
+            {errors.projectLocation && (
+              <p className="text-red-500 text-xs mt-1">
+                {errors.projectLocation}
+              </p>
+            )}
+          </div>
+
+          <div>
+            <label htmlFor={fieldId("sqFt")} className={labelClass}>
+              Sq. ft.{" "}
+              {isRequired("sqFt") && <span className="text-[#ED2024]">*</span>}
+            </label>
+            <select
+              id={fieldId("sqFt")}
+              value={formData.sqFt}
+              onChange={(e) => {
+                setFormData({ ...formData, sqFt: e.target.value });
+                clearError("sqFt");
+              }}
+              className={selectClass}
+            >
+              <option value="">Select sq. ft. range</option>
+              {sqFtOptions.map((opt) => (
+                <option key={opt} value={opt}>
+                  {opt}
+                </option>
+              ))}
+            </select>
+            {errors.sqFt && (
+              <p className="text-red-500 text-xs mt-1">{errors.sqFt}</p>
+            )}
+          </div>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
@@ -407,30 +465,70 @@ export default function ConsultationForm({
           </div>
         </div>
 
-        <div>
-          <label htmlFor={fieldId("sqFt")} className={labelClass}>
-            Sq. ft.{" "}
-            {isRequired("sqFt") && <span className="text-[#ED2024]">*</span>}
-          </label>
-          <select
-            id={fieldId("sqFt")}
-            value={formData.sqFt}
-            onChange={(e) => {
-              setFormData({ ...formData, sqFt: e.target.value });
-              clearError("sqFt");
-            }}
-            className={selectClass}
-          >
-            <option value="">Select sq. ft. range</option>
-            {sqFtOptions.map((opt) => (
-              <option key={opt} value={opt}>
-                {opt}
-              </option>
-            ))}
-          </select>
-          {errors.sqFt && (
-            <p className="text-red-500 text-xs mt-1">{errors.sqFt}</p>
-          )}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+          <div>
+            <label htmlFor={fieldId("startTimeline")} className={labelClass}>
+              Project Start Timeline{" "}
+              {isRequired("startTimeline") && (
+                <span className="text-[#ED2024]">*</span>
+              )}
+            </label>
+            <select
+              id={fieldId("startTimeline")}
+              value={formData.startTimeline}
+              onChange={(e) => {
+                setFormData({
+                  ...formData,
+                  startTimeline: e.target.value,
+                });
+                clearError("startTimeline");
+              }}
+              className={selectClass}
+            >
+              <option value="">Select timeline</option>
+              {START_TIMELINES.map((opt) => (
+                <option key={opt} value={opt}>
+                  {opt}
+                </option>
+              ))}
+            </select>
+            {errors.startTimeline && (
+              <p className="text-red-500 text-xs mt-1">
+                {errors.startTimeline}
+              </p>
+            )}
+          </div>
+
+          <div>
+            <label htmlFor={fieldId("budget")} className={labelClass}>
+              Project Budget{" "}
+              {isRequired("budget") && (
+                <span className="text-[#ED2024]">*</span>
+              )}
+            </label>
+            <select
+              id={fieldId("budget")}
+              value={formData.budget}
+              onChange={(e) => {
+                setFormData({
+                  ...formData,
+                  budget: e.target.value,
+                });
+                clearError("budget");
+              }}
+              className={selectClass}
+            >
+              <option value="">Select budget range</option>
+              {BUDGETS.map((opt) => (
+                <option key={opt} value={opt}>
+                  {opt}
+                </option>
+              ))}
+            </select>
+            {errors.budget && (
+              <p className="text-red-500 text-xs mt-1">{errors.budget}</p>
+            )}
+          </div>
         </div>
 
         <div>
