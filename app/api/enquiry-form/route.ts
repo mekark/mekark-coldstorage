@@ -1,6 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
+import {
+  type EnquiryFormPayload,
+  validateEnquiryPayload,
+} from "@/lib/enquiry-form";
 
 const UPSTREAM_ENDPOINT =
+  process.env.ENQUIRY_UPSTREAM_URL ??
   "https://mekark-mail.onrender.com/api/enquiry-form";
 
 function resolveUpstreamOrigin(request: NextRequest) {
@@ -20,19 +25,19 @@ function resolveUpstreamOrigin(request: NextRequest) {
   if (forwardedHost) {
     return `${forwardedProto}://${forwardedHost}`;
   }
-  
 
   return new URL(request.url).origin;
 }
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
+    const body = (await request.json()) as Partial<EnquiryFormPayload>;
+    const validationError = validateEnquiryPayload(body);
 
-    if (!body.name || !body.phone) {
+    if (validationError) {
       return NextResponse.json(
         {
-          message: "Missing required fields",
+          message: validationError,
         },
         {
           status: 400,
@@ -40,10 +45,24 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const upstreamOrigin =
-      resolveUpstreamOrigin(request);
+    const payload: EnquiryFormPayload = {
+      name: body.name!.trim(),
+      email: body.email?.trim(),
+      phone: body.phone?.trim(),
+      company: body.company?.trim(),
+      location: body.location?.trim(),
+      industry: body.industry,
+      storageType: body.storageType,
+      sqf: body.sqf,
+      startTimeline: body.startTimeline,
+      budget: body.budget,
+      message: body.message,
+      sourceName: body.sourceName!.trim(),
+      sourceDomain: body.sourceDomain?.trim(),
+    };
 
-    // FIRE & FORGET
+    const upstreamOrigin = resolveUpstreamOrigin(request);
+
     const response = await fetch(UPSTREAM_ENDPOINT, {
       method: "POST",
       headers: {
@@ -51,17 +70,16 @@ export async function POST(request: NextRequest) {
         Accept: "application/json",
         Origin: upstreamOrigin,
       },
-      body: JSON.stringify(body),
+      body: JSON.stringify(payload),
       cache: "no-store",
     });
-    console.log("FORM DATA:", body);
 
     const responseText = await response.text();
-    
-    console.log("UPSTREAM STATUS:", response.status);
-    console.log("UPSTREAM RESPONSE:", responseText);
-    
+
     if (!response.ok) {
+      console.error("UPSTREAM STATUS:", response.status);
+      console.error("UPSTREAM RESPONSE:", responseText);
+
       return NextResponse.json(
         {
           success: false,
@@ -72,11 +90,10 @@ export async function POST(request: NextRequest) {
         },
       );
     }
-    
+
     return NextResponse.json({
       success: true,
     });
-
   } catch (error) {
     console.error("API route error:", error);
 

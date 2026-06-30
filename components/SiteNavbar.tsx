@@ -16,18 +16,19 @@ const navItems = [
   { label: "Testimonials", href: "#testimonials", pageHref: "/#testimonials" },
 ];
 
-const moreLinks = [
-  { label: "Data Centers", href: "https://mekark-datacenter.vercel.app/" },
-  { label: "Automotive", href: "https://mekark-automotive.vercel.app/" },
-  { label: "Textile", href: "https://mekark-textile.vercel.app/" },
-  { label: "Industrial Tanks", href: "https://mekark-tanks.vercel.app/" },
-  { label: "Logistics & Warehousing", href: "https://logics-ten.vercel.app/" },
-  { label: "Electronics", href: "https://mekark-electronics.vercel.app/" },
-  { label: "Windmill & Renewable Energy", href: "https://mekark-windmill.vercel.app/" },
-  { label: "MEP & Utility Systems", href: "https://mep-mekark.vercel.app/" },
-  { label: "Food", href: "https://mekark-food.vercel.app/" },
-  { label: "Factories", href: "https://mekark-factories.vercel.app/" },
-  { label: "Blog", href: "https://blog.mekark.com/" },
+const moreLinks: { label: string; href: string; external?: boolean }[] = [
+  { label: "Career", href: "/career", external: true },
+  { label: "Data Centers", href: "https://mekark-datacenter.vercel.app/", external: true },
+  { label: "Automotive", href: "https://mekark-automotive.vercel.app/", external: true },
+  { label: "Textile", href: "https://mekark-textile.vercel.app/", external: true },
+  { label: "Industrial Tanks", href: "https://mekark-tanks.vercel.app/", external: true },
+  { label: "Logistics & Warehousing", href: "https://logics-ten.vercel.app/", external: true },
+  { label: "Electronics", href: "https://mekark-electronics.vercel.app/", external: true },
+  { label: "Windmill & Renewable Energy", href: "https://mekark-windmill.vercel.app/", external: true },
+  { label: "MEP & Utility Systems", href: "https://mep-mekark.vercel.app/", external: true },
+  { label: "Food", href: "https://mekark-food.vercel.app/", external: true },
+  { label: "Factories", href: "https://mekark-factories.vercel.app/", external: true },
+  { label: "Blog", href: "https://blog.mekark.com/", external: true },
 ];
 
 type SiteNavbarProps = {
@@ -157,17 +158,29 @@ export default function SiteNavbar({ variant = "hero" }: SiteNavbarProps) {
                     onMouseLeave={scheduleCloseMoreMenu}
                   >
                     <div className="rounded-xl border border-white/15 bg-[#0a1219] py-2 shadow-2xl">
-                      {moreLinks.map((link) => (
-                        <a
-                          key={link.label}
-                          href={link.href}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="block px-4 py-2.5 text-white text-[14px] font-medium transition-colors hover:bg-white/10 hover:text-white/90"
-                        >
-                          {link.label}
-                        </a>
-                      ))}
+                      {moreLinks.map((link) =>
+                        link.external ? (
+                          <a
+                            key={link.label}
+                            href={link.href}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="block px-4 py-2.5 text-white text-[14px] font-medium transition-colors hover:bg-white/10 hover:text-white/90"
+                          >
+                            {link.label}
+                          </a>
+                        ) : (
+                          <Link
+                            key={link.label}
+                            href={link.href}
+                            className={`block px-4 py-2.5 text-[14px] font-medium transition-colors hover:bg-white/10 hover:text-white/90 ${
+                              pathname === link.href ? "text-[#ED2024]" : "text-white"
+                            }`}
+                          >
+                            {link.label}
+                          </Link>
+                        ),
+                      )}
                     </div>
                   </motion.div>
                 )}
@@ -240,21 +253,39 @@ export default function SiteNavbar({ variant = "hero" }: SiteNavbarProps) {
 
                 {mobileMoreOpen && (
                   <div className="mt-3 ml-3 flex flex-col gap-3 border-l border-white/20 pl-4">
-                    {moreLinks.map((link) => (
-                      <a
-                        key={link.label}
-                        href={link.href}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-white/80 text-sm"
-                        onClick={() => {
-                          setMobileMenuOpen(false);
-                          setMobileMoreOpen(false);
-                        }}
-                      >
-                        {link.label}
-                      </a>
-                    ))}
+                    {moreLinks.map((link) =>
+                      link.external ? (
+                        <a
+                          key={link.label}
+                          href={link.href}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-white/80 text-sm"
+                          onClick={() => {
+                            setMobileMenuOpen(false);
+                            setMobileMoreOpen(false);
+                          }}
+                        >
+                          {link.label}
+                        </a>
+                      ) : (
+                        <Link
+                          key={link.label}
+                          href={link.href}
+                          className={`text-sm ${
+                            pathname === link.href
+                              ? "text-[#ED2024] font-semibold"
+                              : "text-white/80"
+                          }`}
+                          onClick={() => {
+                            setMobileMenuOpen(false);
+                            setMobileMoreOpen(false);
+                          }}
+                        >
+                          {link.label}
+                        </Link>
+                      ),
+                    )}
                   </div>
                 )}
               </div>

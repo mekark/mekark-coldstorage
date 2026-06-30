@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
+import { getSourceDomain, submitEnquiryForm } from "@/lib/enquiry-form";
 
 const START_TIMELINES = [
   "Immediately",
@@ -202,32 +203,21 @@ export default function ConsultationForm({
     setIsSubmitting(true);
 
     try {
-      const response = await fetch("/api/enquiry-form", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name: formData.name.trim(),
-          email: formData.email.trim(),
-          phone: formData.phone.trim(),
-          company: formData.companyName.trim(),
-          location: formData.projectLocation.trim(),
-          industry: formData.industryType,
-          storageType: formData.storageType,
-          sqf: formData.sqFt,
-          startTimeline: formData.startTimeline,
-          budget: formData.budget,
-          message: buildMessage(formData),
-          sourceName,
-          sourceDomain:
-            typeof window !== "undefined" ? window.location.hostname : "",
-        }),
+      await submitEnquiryForm({
+        name: formData.name.trim(),
+        email: formData.email.trim(),
+        phone: formData.phone.trim(),
+        company: formData.companyName.trim(),
+        location: formData.projectLocation.trim(),
+        industry: formData.industryType,
+        storageType: formData.storageType,
+        sqf: formData.sqFt,
+        startTimeline: formData.startTimeline,
+        budget: formData.budget,
+        message: buildMessage(formData),
+        sourceName,
+        sourceDomain: getSourceDomain(),
       });
-
-      if (!response.ok) {
-        throw new Error("Submission failed");
-      }
 
       setSubmitted(true);
       setFormData(initialFormData);
